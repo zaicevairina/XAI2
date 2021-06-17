@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %} Модель {% endblock %}
+{% block content %}
+<div class="">
+  <form method="POST">
+    {% csrf_token %}
+
+      {% for field in fields %}
+      <div class="input-group mb-3">
+        <span class="input-group-text" id={{field}}>{{field}}</span>
+        <input
+          type="text"
+          name={{field}}
+          class="form-control"
+          placeholder={{field}}
+          aria-label={{field}}
+          aria-describedby={{field}}
+          autocomplete="off"
+          autocapitalize="none"
+        />
+      </div>
+      {% endfor %}
+      <button type="submit" class="btn btn-outline-secondary">
+        Рассчитать
+      </button>
+  </form>
+</div>
+{% endblock %}

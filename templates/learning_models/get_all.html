@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %} Модели {% endblock %}
+{% block content %}
+{% csrf_token %}
+<div class="">
+  <div>
+    <a href='/models/create' class="link-dark">Создать новую модель</a>
+  </div>
+  <div>
+    <a href='/models/compare' class="link-dark">Сравнение моделей</a>
+  </div>
+  {% if models|length > 0 %}
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Название</th>
+        <th scope="col"></th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for model in models %}
+      <tr>
+        <td name='title'>{{model.title}}</td>
+        <td>
+          <a href='/models/{{model.id}}' class="link-dark">Открыть модель</a>
+        </td>
+        <td>
+          <a href='/models/info/{{model.id}}' class="link-dark">Информация</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% elif models|length == 0 %}
+  <h2 class="text-center">
+    Ничего не найдено
+  </h2>
+  {% endif %}
+</div>
+{% endblock %}

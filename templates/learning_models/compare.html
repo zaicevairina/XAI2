@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% block title %} Сравнить модели {% endblock %}
+{% block content %}
+<div class="d-flex">
+      <div>
+        Кликните на модели, которые хотите сравнить
+        {% for model in models %}
+        <div class="input-group m-3">
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" id={{model.title}} data-name="{{model.name}}">
+            <label class="form-check-label" for={{model.id}}>{{model.title}}</label>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="chart">
+        <canvas id="myChart" width="400" height="200"></canvas>
+      </div>
+
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script type="text/javascript">
+
+  const data = {
+    labels: [0, 1, 2, 3, 4, 5],
+    datasets: [],
+  }
+
+  const config = {
+    type: 'line',
+    data,
+    options: {
+      maintainAspectRatio: false,
+      responsive: true,
+      interaction: {
+        mode: 'index',
+        intersect: false,
+      },
+      plugins: {
+        // legend: {
+        //   display: false,
+        // },
+        title: {
+          text: 'График обучения модели',
+          display: true,
+          align: 'start'
+        },
+      },
+    }
+  };
+  const myChart = new Chart(
+    document.getElementById('myChart'),
+    config
+  );
+
+  const checkboxes = document.querySelectorAll('input');
+
+  const addDatasetToChart = (name, { graphData }) => {
+
+    if (graphData.length > myChart.data.labels.length) {
+      for (let i = myChart.data.labels.length; i< graphData.length; i++) {
+        myChart.data.labels.push(graphData[i][0])
+      }
+    }
+
+    const dataset = []
+
+    for (const item of graphData) {
+      dataset.push(item[1]);
+    }
+
+    const randomColor = Math.floor(Math.random()*16777215).toString(16);
+    const datasetObj = {
+      label: name,
+      backgroundColor: `#${randomColor}`,
+      borderColor: `#${randomColor}`,
+      data: dataset,
+    }
+
+    myChart.data.datasets.push(datasetObj);
+
+    myChart.update()
+  }
+
+  for (const checkbox of checkboxes) {
+    checkbox.addEventListener('input', (event) => {
+      const name = checkbox.getAttribute('data-name');
+      const title = checkbox.getAttribute('id');
+      if (checkbox.checked) {
+        fetch(`/models/get_learn_error?name=${name}`)
+        .then(res => res.json())
+        .then(res => addDatasetToChart(title, res))
+      } else {
+        for (let i = 0; i < myChart.data.datasets.length; i++) {
+
+          const dataset = myChart.data.datasets[i]
+          if (dataset.label === title) {
+            myChart.data.datasets.splice(i, 1);
+            break;
+          }
+        }
+        myChart.update();
+      }
+    })
+  }
+  </script>
+  <style>
+  .chart {
+    height: 500px;
+    width: 50%;
+    margin-left: 100px;
+  }
+
+  .first_col {
+    width: 15rem;
+  }
+  </style>
+</div>
+{% endblock %}

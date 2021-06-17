@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block title %} Обучите модель {% endblock %}
+{% block content %}
+{% csrf_token %}
+<div class="row">
+    <div class="row">
+			<div class="main-form">
+				<form method="POST" enctype="multipart/form-data">{% csrf_token %}
+					<div class="input-group mb-3">
+						<span class="input-group-text" id="addon-wrapping">iterations</span>
+						<input type="text" class="form-control" placeholder="iterations" aria-label="iterations" aria-describedby="addon-wrapping" name="iterations" value="10">
+					</div>
+          <div class="input-group mb-3">
+						<span class="input-group-text" id="addon-wrapping">learning_rate</span>
+						<input type="text" class="form-control" placeholder="learning_rate" aria-label="learning_rate" aria-describedby="addon-wrapping" name="learning_rate" value="0.1">
+					</div>
+          <div class="input-group mb-3">
+						<span class="input-group-text" id="addon-wrapping">depth</span>
+						<input type="text" class="form-control" placeholder="depth" aria-label="depth" aria-describedby="addon-wrapping" name="depth" value="6">
+					</div>
+          <div class="input-group mb-3">
+						<span class="input-group-text" id="addon-wrapping">l2_leaf_reg</span>
+						<input type="text" class="form-control" placeholder="l2_leaf_reg" aria-label="l2_leaf_reg" aria-describedby="addon-wrapping" name="l2_leaf_reg" value="3">
+					</div>
+          <div class="input-group mb-3">
+						<span class="input-group-text" id="addon-wrapping">rsm</span>
+						<input type="text" class="form-control" placeholder="rsm" aria-label="rsm" aria-describedby="addon-wrapping" name="rsm" value="1">
+					</div>
+          nan_mode
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="nan_mode" id="nan_mode1" value="Min" checked>
+            <label class="form-check-label" for="nan_mode1">
+              Min
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="nan_mode" id="nan_mode2" value="Forbidden">
+            <label class="form-check-label" for="nan_mode2">
+              Forbidden
+            </label>
+          </div>
+          <div class="form-check disabled">
+            <input class="form-check-input" type="radio" name="nan_mode" id="nan_mode3" value="Max">
+            <label class="form-check-label" for="nan_mode3">
+              Max
+            </label>
+          </div>
+          cat_features
+          {% for column in columns %}
+          <div class="form-check">
+            {% if column.1 %}
+            <input type="checkbox" class="form-check-input" id={{column.0}} name={{column.0}} checked>
+            {% else %}
+            <input type="checkbox" class="form-check-input" id={{column.0}} name={{column.0}}>
+            {% endif %}
+            <label class="form-check-label" for={{column.0}}>{{column.0}}</label>
+          </div>
+          {% endfor %}
+          <div class="input-group mb-3">
+						<span class="input-group-text" id="addon-wrapping">one_hot_max_size</span>
+						<input type="text" class="form-control" placeholder="one_hot_max_size" aria-label="one_hot_max_size" aria-describedby="addon-wrapping" name="one_hot_max_size" value="2">
+					</div>
+          <div class="input-group mb-3">
+						<span class="input-group-text" id="addon-wrapping">bagging_temperature</span>
+						<input type="text" class="form-control" placeholder="bagging_temperature" aria-label="bagging_temperature" aria-describedby="addon-wrapping" name="bagging_temperature" value="1">
+					</div>
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="example" name="has_time" checked>
+            <label class="form-check-label" for="example">has_time</label>
+          </div>
+          <div class="input-group mb-3">
+						<span class="input-group-text" id="addon-wrapping">min_data_in_leaf</span>
+						<input type="text" class="form-control" placeholder="min_data_in_leaf" aria-label="min_data_in_leaf" aria-describedby="addon-wrapping" name="min_data_in_leaf" value="1">
+					</div>
+          <div class="input-group mb-3">
+						<span class="input-group-text" id="addon-wrapping">max_leaves</span>
+						<input type="text" class="form-control" placeholder="max_leaves" aria-label="max_leaves" aria-describedby="addon-wrapping" name="max_leaves" value="31">
+					</div>
+					<div class="input-group flex-nowrap">
+						<button type="submit" class="btn btn-outline-secondary">Подтвердить</button>
+					</div>
+					<div>
+						{{ msg }}
+					</div>
+				</form>
+			</div>
+    </div>
+</div>
+{% endblock %}

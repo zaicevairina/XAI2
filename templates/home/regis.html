@@ -1,0 +1,24 @@
+{% extends 'base_login.html' %}
+{% block title %} Регистрация {% endblock %}
+{% block content %}
+{% csrf_token %}
+<div class="d-flex justify-content-center">
+        <div class="">
+            <form method="POST">
+                <input type="text" class="form-control mb-2" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" name="first_name" placeholder="Имя">
+                <input type="text" class="form-control mb-2" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" name="last_name" placeholder="Фамилия">
+                <input type="text" class="form-control mb-2" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" name="username" placeholder="Логин">
+                <input type="password" class="form-control mb-2" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" name="password" placeholder="Пароль">
+                <input type="password" class="form-control mb-2" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" name="password2" placeholder="Повторите пароль">
+               <button type="submit" class="btn btn-secondary">Зарегистрировать</button>
+               <div>
+                <!-- {% for _, error in errors.items %}
+                  <span class="error-message">{{ error }}</span>
+                {% endfor %} -->
+                {{ form.username.errors }}
+                {{ form.password.errors }}
+              </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %} Результат обучения {% endblock %}
+{% block content %}
+{% csrf_token %}
+<div class="row">
+    <div class="row">
+			<div class="main-form">
+        {{ msg }}
+        <div class="chart">
+          <canvas id="myChart" width="400" height="200"></canvas>
+        </div>
+			</div>
+      <div class="d-flex flex-row-reverse mt-4">
+        <a href='/models/' class="link-dark">Закрыть</a>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="text/javascript">
+      const graphDataJson = "{{graph_data}}";
+      const graphData = JSON.parse(graphDataJson)
+      const labels = []
+      const dataset = []
+
+      for (const item of graphData) {
+        labels.push(item[0]);
+        dataset.push(item[1]);
+      }
+
+      const data = {
+        labels: labels,
+        datasets: [{
+          label: 'LogLoss',
+          backgroundColor: 'rgb(255, 99, 132)',
+          borderColor: 'rgb(255, 99, 132)',
+          data: dataset,
+        }]
+      }
+
+      const config = {
+        type: 'line',
+        data,
+        options: {
+          maintainAspectRatio: false,
+          responsive: true,
+          interaction: {
+            mode: 'index',
+            intersect: false,
+          },
+          plugins: {
+            legend: {
+              display: false,
+            },
+          },
+        }
+      };
+      const myChart = new Chart(
+        document.getElementById('myChart'),
+        config
+      );
+   </script>
+   <style>
+     .chart {
+       height: 600px;
+       width: 90%;
+     }
+   </style>
+</div>
+{% endblock %}

@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% block title %} Информация о модели {{ model.title }} {% endblock %}
+{% block content %}
+{% csrf_token %}
+<div class="">
+  <div>
+    Описание модели: {{ model.description }}
+    <ul>
+      Параметры модели:
+      {% for param in params %}
+      <li class="mx-5">
+        {{param}}
+      </li>
+      {% endfor %}
+    </ul>
+    <div class="chart">
+      <canvas id="myChart" width="400" height="200"></canvas>
+    </div>
+
+    {% for string in text_info %}
+    <div>
+      {{ string }}
+    </div>
+    {% endfor %}
+
+    <div class="d-flex">
+      <div class="m-3">
+        <div>
+          Prediction values change
+        </div>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th class="first_col" scope="col">Признаки</th>
+              <th scope="col">Важность</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for line in table %}
+            <tr>
+              <td name='title'>{{line.0}}</td>
+              <td>
+                {{ line.1 }}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="m-3">
+        <div>
+          Loss function change
+        </div>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th class="first_col" scope="col">Признаки</th>
+              <th scope="col">Важность</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for line in table2 %}
+            <tr>
+              <td name='title'>{{line.0}}</td>
+              <td>
+                {{ line.1 }}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="image">
+      <img src={{path}} height='100%' />
+    </div>
+    <div class="image">
+      <div>
+        Summary SHAP plot
+      </div>
+      <img src={{path2}} height='100%' />
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script type="text/javascript">
+  const graphDataJson = "{{graph_data}}";
+  const graphData = JSON.parse(graphDataJson)
+  const labels = []
+  const dataset = []
+
+  for (const item of graphData) {
+    labels.push(item[0]);
+    dataset.push(item[1]);
+  }
+
+  const data = {
+    labels: labels,
+    datasets: [{
+      label: 'LogLoss',
+      backgroundColor: 'rgb(255, 99, 132)',
+      borderColor: 'rgb(255, 99, 132)',
+      data: dataset,
+    }]
+  }
+
+  const config = {
+    type: 'line',
+    data,
+    options: {
+      maintainAspectRatio: false,
+      responsive: true,
+      interaction: {
+        mode: 'index',
+        intersect: false,
+      },
+      plugins: {
+        legend: {
+          display: false,
+        },
+        title: {
+          text: 'График обучения модели',
+          display: true,
+          align: 'start'
+        },
+      },
+    }
+  };
+  const myChart = new Chart(
+    document.getElementById('myChart'),
+    config
+  );
+  </script>
+ <style>
+   .chart {
+     height: 300px;
+     width: 50%;
+   }
+
+   .first_col {
+     width: 15rem;
+   }
+
+   .image {
+     overflow-x: auto;
+   }
+ </style>
+</div>
+{% endblock %}

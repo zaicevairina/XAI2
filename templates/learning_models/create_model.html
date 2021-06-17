@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% block title %} Добавьте модель {% endblock %}
+{% block content %}
+{% csrf_token %}
+<div class="row">
+    <div class="row">
+			<span class="mb-3">Приложите CSV файл</span>
+			<div class="main-form">
+				<form method="POST" enctype="multipart/form-data">{% csrf_token %}
+					<div class="input-group mb-3">
+						<input type="file" class="form-control" id="inputGroupFile01" name="model_file">
+					</div>
+					<div class="input-group mb-3">
+						<span class="input-group-text" id="addon-wrapping">Название</span>
+						<input type="text" class="form-control" placeholder="Название" aria-label="Название" aria-describedby="addon-wrapping" name="title">
+					</div>
+					<div class="input-group mb-3">
+						<span class="input-group-text" id="text-wrapping">Описание</span>
+						<textarea class="form-control" placeholder="Описание" aria-label="Описание" aria-describedby="text-wrapping" name="description" rows="3"></textarea>
+					</div>
+					<div class="input-group flex-nowrap">
+						<button type="submit" class="btn btn-outline-secondary">Загрузка</button>
+					</div>
+					<div>
+						{{ msg }}
+					</div>
+				</form>
+			</div>
+    </div>
+		<script>
+			const form = document.querySelector('form');
+			const main = document.querySelector('.main-form')
+			const csvColumns = [];
+			const createCheckBox = ({ columns }) => {
+				const newForm = document.createElement('form')
+				newForm.classList.add('m-3', 'add-form')
+				for (const column of columns) {
+					const div = document.createElement('div')
+					div.classList.add('form-check');
+					const input = document.createElement('input')
+					input.classList.add('form-check-input')
+					input.setAttribute('type', 'checkbox');
+					input.setAttribute('id', column);
+					input.setAttribute('name', column);
+					input.setAttribute('checked', true);
+					const label = document.createElement('label')
+					label.classList.add('form-check-label')
+
+					label.setAttribute('for', column);
+					label.innerText = column;
+					div.appendChild(input);
+					div.appendChild(label);
+					newForm.appendChild(div);
+				}
+
+				const button = document.createElement('button')
+				button.classList.add('btn', 'btn-outline-secondary')
+				button.setAttribute('type', 'submit');
+				button.innerText = 'Подтвердить';
+				newForm.appendChild(button);
+				main.appendChild(newForm);
+
+				newForm.addEventListener('submit', (event) => {
+					event.preventDefault();
+					console.log(newForm);
+
+					const formData = new FormData(newForm);
+					const formData2 = new FormData(form);
+					for (column of columns) {
+						if (formData.get(column)) {
+							csvColumns.push(column);
+						}
+					}
+
+					formData2.append('columns', csvColumns)
+					fetch('', {
+						method: 'POST',
+						body: formData2,
+					})
+					.then((res) => res.json())
+					.then((res) => {
+						console.log(1);
+						window.location.href = `/models/learn/${res.id}`;
+					})
+				})
+			}
+
+			const handler = (event) => {
+					event.preventDefault();
+					const formData = new FormData(form);
+					fetch('/models/create/fix', {
+						method: 'POST',
+						body: formData
+					})
+					.then((res) => res.json())
+					.then((res) => {
+						createCheckBox(res)
+					})
+				}
+
+			if (form) {
+				form.addEventListener('submit', handler);
+			}
+		</script>
+</div>
+{% endblock %}
